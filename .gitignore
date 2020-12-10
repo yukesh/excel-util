@@ -1,0 +1,19 @@
+.DS_Store
+
+#-----------------------#
+# IDEs & Editors Ignore #
+#-----------------------#
+
+# VS Code
+/.vscode
+
+# JetBrains IDEs
+.idea/
+*.iml
+
+# Eclipse
+.classpath
+.project
+.settings/
+/target
+.factorypath
