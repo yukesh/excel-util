@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -90,6 +91,63 @@ public class ExcelReader {
      */
     public List<String[]> getRowDataList(){
         return getRowDataList(null, null);
+    }
+
+    /**
+     * Returns the Workbook data for the requested Row count.
+     * @param aRowSize
+     * @return - Retrieve the data for the requested RowSize
+     */
+    public List<String[]> getRowDataList(Integer aRowSize){
+        return getRowDataList(null, aRowSize);
+    }
+
+    /**
+     * Returns List of Map with Key as the Column Header and
+     * Value as respective Row value.
+     *
+     * @return - Retrieve the data with Column Header as key and
+     * value with respective row cell value.
+     */
+    public List<Map<String,String>> getRowHeaderDataMapList(){
+        return getRowHeaderDataMapList(null);
+    }
+
+    /**
+     * Returns List of Map with Key as the Column Header and
+     * Value as respective Row value for the requested row count.
+     *
+     * @param aRowSize
+     * @return - Retrieve the data with Column Header as key and
+     * value with respective row cell value for the requested row count.
+     */
+    public List<Map<String,String>> getRowHeaderDataMapList(Integer aRowSize){
+
+        List<Map<String,String>> rowHeaderDataMapList = new ArrayList<Map<String,String>>();
+
+        List<String[]> rowDataList = getRowDataList(null, aRowSize);
+        if(!rowDataList.isEmpty()){
+
+            //Assuming the first row is the Header
+            String[] headerArr = rowDataList.get(0);
+
+            for(int count = 0; count < rowDataList.size(); count++){
+
+                if(count != 0){
+
+                    Map<String,String> rowDataMap = new HashMap<>();
+                    String[] rowDataArr = rowDataList.get(count);
+
+                    for(int counter = 0; counter < headerArr.length; counter++){
+                        rowDataMap.put(headerArr[counter], rowDataArr[counter]);
+                    }
+
+                    rowHeaderDataMapList.add(rowDataMap);
+                }
+            }
+        }
+        return rowHeaderDataMapList;
+
     }
 
     /**

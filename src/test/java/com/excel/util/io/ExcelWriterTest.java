@@ -1,4 +1,4 @@
-package com.excel.util;
+package com.excel.util.io;
 
 import com.excel.util.io.ExcelWriter;
 import com.excel.util.model.SheetModel;
