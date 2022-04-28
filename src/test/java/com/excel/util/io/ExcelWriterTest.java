@@ -1,10 +1,10 @@
 package com.excel.util.io;
 
-import com.excel.util.io.ExcelWriter;
-import com.excel.util.model.SheetModel;
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
 
-import static org.junit.Assert.assertTrue;
+import com.excel.util.model.SheetModel;
 
 /**
  * Unit Test Class for ExcelWriter

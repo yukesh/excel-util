@@ -1,10 +1,12 @@
 package com.excel.util.io;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -61,28 +63,25 @@ public class ExcelReader {
     /**
      * @param aFilePath - Instance using the File location
      */
-    public ExcelReader(String aFilePath) {
+    public ExcelReader(String aFilePath) throws Exception {
         this(new File(aFilePath));
     }
 
     /**
      * @param aFile - Instance using the Input file
+     * @throws InvalidFormatException 
      */
-    public ExcelReader(File aFile) {
-        try {
-            if(aFile.isFile()) {
-                OPCPackage excelPackage = OPCPackage.open(aFile, PackageAccess.READ);
-                stringsTable = new ReadOnlySharedStringsTable(excelPackage);
-                xssfReader = new XSSFReader(excelPackage);
-                inputFactory = XMLInputFactory.newInstance();
+    public ExcelReader(File aFile) throws Exception {
+    	if(aFile.isFile()) {
+            OPCPackage excelPackage = OPCPackage.open(aFile, PackageAccess.READ);
+            stringsTable = new ReadOnlySharedStringsTable(excelPackage);
+            xssfReader = new XSSFReader(excelPackage);
+            inputFactory = XMLInputFactory.newInstance();
 
-                setSheetNames();
+            setSheetNames();
 
-            } else {
-                System.out.println("File Not Found");
-            }
-        } catch (Exception exception) {
-            exception.printStackTrace();
+        } else {
+        	throw new FileNotFoundException("File Not Found - " + aFile.getName());
         }
     }
 
@@ -135,11 +134,16 @@ public class ExcelReader {
 
                 if(count != 0){
 
-                    Map<String,String> rowDataMap = new HashMap<>();
+                    Map<String,String> rowDataMap = new LinkedHashMap<>(); //LinkedHashMap to maintain Row order
                     String[] rowDataArr = rowDataList.get(count);
+                    
+                    int rowDataLength = rowDataArr.length;
 
                     for(int counter = 0; counter < headerArr.length; counter++){
-                        rowDataMap.put(headerArr[counter], rowDataArr[counter]);
+                    	
+                    	String rowData = rowDataLength > counter ? rowDataArr[counter] : null;
+                    	
+                        rowDataMap.put(headerArr[counter], rowData);
                     }
 
                     rowHeaderDataMapList.add(rowDataMap);
@@ -193,7 +197,9 @@ public class ExcelReader {
         try {
             XSSFReader.SheetIterator sheetItr = (XSSFReader.SheetIterator) xssfReader.getSheetsData();
             while(sheetItr.hasNext()) {
+            	
                 InputStream inputStream = sheetItr.next();
+                
                 String sheetName = sheetItr.getSheetName();
                 HashMap<String, List<String[]>> sheetRowDataMap = new HashMap<String, List<String[]>>();
 
