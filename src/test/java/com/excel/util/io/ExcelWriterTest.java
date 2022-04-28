@@ -18,7 +18,7 @@ public class ExcelWriterTest {
     public void writeToExcel() {
 
         String fileAbsPath = "/Users/yukesh/Workspaces/Output.xlsx";
-        boolean result = ExcelWriter.getInstance().writeToExcel(fileAbsPath, mockSheetModel());
+        boolean result = ExcelWriter.getInstance().writeToExcel(mockSheetModel(), fileAbsPath);
         assertTrue(result);
     }
 

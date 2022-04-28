@@ -21,7 +21,7 @@ import com.excel.util.model.SheetModel;
  * @author yukesh
  */
 public class ExcelWriter {
-
+	
     /**
      * Private Constructor to avoid instance creation from outside
      */
@@ -44,7 +44,7 @@ public class ExcelWriter {
         return ExcelWriterSingleton.INSTANCE;
     }
 
-    public boolean writeToExcel(String aFilePath, SheetModel aSheetModel) {
+    public boolean writeToExcel(SheetModel aSheetModel, String aFilePath) {
 
         boolean isSuccess = false;
         if(StringUtils.isNotBlank(aFilePath) && null != aSheetModel){
@@ -73,7 +73,7 @@ public class ExcelWriter {
                 }
             }
             //Write the Workbook to the File
-            isSuccess = writeToFile(aFilePath, xssfWorkbook);
+            isSuccess = writeToFile(xssfWorkbook, aFilePath);
         }
         return isSuccess;
     }
@@ -84,7 +84,7 @@ public class ExcelWriter {
      * @param aXssfWorkbook
      * @return
      */
-    public static boolean writeToFile(String aFilePath, XSSFWorkbook aXssfWorkbook){
+    public static boolean writeToFile(XSSFWorkbook aXssfWorkbook, String aFilePath){
         boolean isSuccess = false;
 
         if(null != aXssfWorkbook){
@@ -96,13 +96,13 @@ public class ExcelWriter {
                 fileOutputStream.close();
                 isSuccess = true;
                 System.out.println("Workbook has been created Successfully! - [" + aFilePath +"]");
-            } catch (FileNotFoundException e) {
-                System.out.println("File Not Found Exception Occurred while writing to [" + aFilePath +"]");
-                e.printStackTrace();
+            } catch (FileNotFoundException fileNotFoundException) {
+            	System.out.println("File Not Found Exception Occurred while writing to [" + aFilePath +"]");
+            	fileNotFoundException.printStackTrace();
 
-            } catch (IOException e) {
-                System.out.println("IO Exception Occurred while writing to [" + aFilePath +"]");
-                e.printStackTrace();
+            } catch (IOException ioException) {
+            	System.out.println("IO Exception Occurred while writing to [" + aFilePath +"]");
+            	ioException.printStackTrace();
             }
         }
 
