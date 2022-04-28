@@ -15,6 +15,8 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
@@ -30,6 +32,8 @@ import org.apache.poi.xssf.eventusermodel.XSSFReader;
  */
 public class ExcelReader {
 
+	private static final Logger logger = LogManager.getLogger(ExcelReader.class);
+	
     private ReadOnlySharedStringsTable stringsTable;
     private XSSFReader xssfReader;
     private XMLInputFactory inputFactory;
@@ -93,9 +97,10 @@ public class ExcelReader {
     	try {
     		if(null != excelPackage) {
     			excelPackage.close();
+    			logger.debug("OPCPackage closed");
     		}
 		} catch (IOException ioException) {
-			ioException.printStackTrace();
+			logger.error(ioException);
 		}
     }
     /**
@@ -255,8 +260,8 @@ public class ExcelReader {
             }
 
         } catch (Exception exception) {
-            System.out.println("Exception Occurred while initializing the Stream Reader");
-            exception.printStackTrace();
+        	logger.warn("Exception Occurred while initializing the Stream Reader");
+            logger.error(exception);
 
         }
         return sheetRowDataMapList;

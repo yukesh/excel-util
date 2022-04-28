@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -23,6 +25,8 @@ import com.excel.util.model.SheetModel;
  * @author yukesh
  */
 public class ExcelWriter {
+	
+	private static final Logger logger = LogManager.getLogger(ExcelWriter.class);
 	
     /**
      * Private Constructor to avoid instance creation from outside
@@ -103,14 +107,14 @@ public class ExcelWriter {
                 aXssfWorkbook.write(fileOutputStream);
                 fileOutputStream.close();
                 isSuccess = true;
-                System.out.println("Workbook has been created Successfully! - [" + aFilePath +"]");
+                logger.info("Workbook has been created Successfully! - [" + aFilePath +"]");
             } catch (FileNotFoundException fileNotFoundException) {
-            	System.out.println("File Not Found Exception Occurred while writing to [" + aFilePath +"]");
-            	fileNotFoundException.printStackTrace();
+            	logger.warn("File Not Found Exception Occurred while writing to [" + aFilePath +"]");
+            	logger.error(fileNotFoundException);
 
             } catch (IOException ioException) {
-            	System.out.println("IO Exception Occurred while writing to [" + aFilePath +"]");
-            	ioException.printStackTrace();
+            	logger.warn("IO Exception Occurred while writing to [" + aFilePath +"]");
+            	logger.error(ioException);
             }
         }
 
