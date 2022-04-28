@@ -33,6 +33,7 @@ public class ExcelReader {
     private ReadOnlySharedStringsTable stringsTable;
     private XSSFReader xssfReader;
     private XMLInputFactory inputFactory;
+    private OPCPackage excelPackage;
 
     private static final String ELEMENT_ROW = "row";
     private static final String ELEMENT_C = "c";
@@ -73,7 +74,7 @@ public class ExcelReader {
      */
     public ExcelReader(File aFile) throws Exception {
     	if(aFile.isFile()) {
-            OPCPackage excelPackage = OPCPackage.open(aFile, PackageAccess.READ);
+            excelPackage = OPCPackage.open(aFile, PackageAccess.READ);
             stringsTable = new ReadOnlySharedStringsTable(excelPackage);
             xssfReader = new XSSFReader(excelPackage);
             inputFactory = XMLInputFactory.newInstance();
@@ -85,6 +86,18 @@ public class ExcelReader {
         }
     }
 
+    /**
+     * Close the Excel file after reading.
+     */
+    public void close() {
+    	try {
+    		if(null != excelPackage) {
+    			excelPackage.close();
+    		}
+		} catch (IOException ioException) {
+			ioException.printStackTrace();
+		}
+    }
     /**
      * @return - Retrieve the first sheet data
      */
@@ -121,10 +134,22 @@ public class ExcelReader {
      * value with respective row cell value for the requested row count.
      */
     public List<Map<String,String>> getRowHeaderDataMapList(Integer aRowSize){
+    	return getRowHeaderDataMapList(null, aRowSize);
+    }
+    
+    /**
+     * Returns List of Map with Key as the Column Header and
+     * Value as respective Row value for the requested row count.
+     * 
+     * @param aSheetName
+     * @param aRowSize
+     * @return
+     */
+    public List<Map<String,String>> getRowHeaderDataMapList(String aSheetName, Integer aRowSize){
 
         List<Map<String,String>> rowHeaderDataMapList = new ArrayList<Map<String,String>>();
 
-        List<String[]> rowDataList = getRowDataList(null, aRowSize);
+        List<String[]> rowDataList = getRowDataList(aSheetName, aRowSize);
         if(!rowDataList.isEmpty()){
 
             //Assuming the first row is the Header
@@ -150,6 +175,9 @@ public class ExcelReader {
                 }
             }
         }
+        
+        close();
+        
         return rowHeaderDataMapList;
 
     }

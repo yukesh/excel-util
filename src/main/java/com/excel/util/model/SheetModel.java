@@ -15,6 +15,14 @@ public class SheetModel {
     private String[] headerAttrs;
     private List<String[]> rowValueArr;
 
+    public SheetModel() {
+    	super();
+    }
+    
+    public SheetModel(String aSheetName) {
+    	sheetName = aSheetName;
+    }
+    
     /**
      * Set the Sheet Name
      * @param aSheetName

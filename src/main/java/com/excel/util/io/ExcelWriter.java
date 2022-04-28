@@ -5,6 +5,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
@@ -44,6 +46,12 @@ public class ExcelWriter {
         return ExcelWriterSingleton.INSTANCE;
     }
 
+    /**
+     * Method to write the SheetModel to file
+     * @param aSheetModel
+     * @param aFilePath
+     * @return
+     */
     public boolean writeToExcel(SheetModel aSheetModel, String aFilePath) {
 
         boolean isSuccess = false;
@@ -79,12 +87,12 @@ public class ExcelWriter {
     }
     
     /**
-     * Helper Class to Write the XSSFWorkbook to the file.
+     * Method to Write the XSSFWorkbook to the file.
      * @param aFilePath
      * @param aXssfWorkbook
      * @return
      */
-    public static boolean writeToFile(XSSFWorkbook aXssfWorkbook, String aFilePath){
+    public boolean writeToFile(XSSFWorkbook aXssfWorkbook, String aFilePath){
         boolean isSuccess = false;
 
         if(null != aXssfWorkbook){
@@ -108,5 +116,42 @@ public class ExcelWriter {
 
         return isSuccess;
     }
+    
+    /**
+	 * Method to convert the RowHeaderDataMap to SheetModel and write to Excel workbook.
+	 * 
+	 * @param aRowHeaderDataMapList
+	 * @param aSheetName
+	 * @param aFilePath
+	 */
+	public boolean writeToExcel(List<Map<String, String>> aRowHeaderDataMapList, String aSheetName, String aFilePath) {
+
+		boolean isSuccess = false;
+
+		if (!aRowHeaderDataMapList.isEmpty()) {
+			
+			String sheetName = StringUtils.isNotBlank(aSheetName) ? aSheetName : "Sheet";
+			SheetModel sheetModel = new SheetModel(sheetName);
+
+			Set<String> headerSet = aRowHeaderDataMapList.get(0).keySet();
+			sheetModel.setHeaderAttrs(headerSet.toArray(new String[headerSet.size()]));
+
+			aRowHeaderDataMapList.forEach(headerDataMap -> {
+
+				List<String> rowValueList = new ArrayList<>();
+				headerSet.forEach(header -> {
+					rowValueList.add(headerDataMap.get(header));
+				});
+
+				sheetModel.getRowValueArr().add(rowValueList.toArray(new String[rowValueList.size()]));
+
+			});
+
+			isSuccess = writeToExcel(sheetModel, aFilePath);
+		}
+
+		return isSuccess;
+
+	}
 
 }
